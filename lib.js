@@ -52,7 +52,7 @@ module.exports = (options) => {
         if (options.jekyll) {
             challengeContent = `---\nlayout: null\npermalink: /.well-known/acme-challenge/${key}\n---\n${value}`;
         } else if (options.lektor) {
-            challengeContent = `_model: acme-challenge\n---\ntitle: acme\n---\n_slug: .well-known/acme-challenge/${key}\n---\n challenge: ${value}\n`;
+            challengeContent = `_model: acme-challenge\n---\n_slug: .well-known/acme-challenge/${key}\n---\n challenge: ${value}\n`;
         }
         // Need to bluebird-ify to use .asCallback()
         let filePath = encodeURIComponent(path.posix.resolve('/', options.path, key));
