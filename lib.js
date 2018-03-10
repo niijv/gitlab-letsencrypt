@@ -55,10 +55,11 @@ module.exports = (options) => {
             challengeContent = `_model: acme-challenge\n---\n_slug: .well-known/acme-challenge/${key}\n---\n challenge: ${value}\n`;
         }
         // Need to bluebird-ify to use .asCallback()
-        let filePath = encodeURIComponent(path.posix.resolve('/', options.path, key));
+        let filePath = path.posix.resolve('/', options.path, key);
         if (options.lektor) {
-            filePath = encodeURIComponent(path.posix.join(filePath, 'contents.lr'));
+            filePath = path.posix.join(filePath, 'contents.lr');
         }
+        filePath = encodeURIComponent(filePath);
         return Promise.resolve(gitlabRequest.post({
             url: `/projects/${repo.id}/repository/files/${filePath}`,
             body: {
@@ -71,7 +72,11 @@ module.exports = (options) => {
     };
 
     const deleteChallenges = (key, repo) => {
-        const filePath = encodeURIComponent(path.posix.resolve('/', options.path, key));
+        let filePath = path.posix.resolve('/', options.path, key);
+        if (options.lektor) {
+            filePath = path.posix.join(filePath, 'contents.lr');
+        }
+        filePath = encodeURIComponent(filePath);
         return Promise.resolve(gitlabRequest.delete({
             url: `/projects/${repo.id}/repository/files/${filePath}`,
             body: {
