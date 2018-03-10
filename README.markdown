@@ -13,11 +13,6 @@ Create a new model `acme-challenge`:
 name = ACME-Challenge
 label = ACME-Challenge
 
-[fields.title]
-description = Dummy for the id.
-type = string
-width = 1/2
-
 [fields.challenge]
 description = The challenge goes here. The location goes in system field "URL slug".
 type = string
