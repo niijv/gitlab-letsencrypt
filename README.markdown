@@ -6,7 +6,7 @@ This fork adds lektor support to the tool.
 
 ## Lektor support
 
-Create a new model *acme-challenge*:
+Create a new model `acme-challenge`:
 
 ```
 [model]
@@ -23,13 +23,13 @@ description = The challenge goes here. The location goes in system field "URL sl
 type = string
 width = 1/2
 ```
-
-and a template *acme-challenge.html*:
+   
+and a template `acme-challenge.html`:
 
 ```
 {{ this.challenge }}
 ```
-
+   
 in your lektor project.
 
 ## Installation
