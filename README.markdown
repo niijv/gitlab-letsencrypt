@@ -1,6 +1,36 @@
-# gitlab-letsencrypt [![Build Status](https://travis-ci.org/rolodato/gitlab-letsencrypt.svg?branch=master)](https://travis-ci.org/rolodato/gitlab-letsencrypt)
+# gitlab-letsencrypt  [![Docker Automated build](https://img.shields.io/docker/automated/niijv4/gitlab-letsencrypt.svg)](https://hub.docker.com/r/niijv4/gitlab-letsencrypt/) [![Docker Pulls](https://img.shields.io/docker/pulls/niijv4/gitlab-letsencrypt.svg)](https://hub.docker.com/r/niijv4/gitlab-letsencrypt/)
 
 Command-line tool to generate a [Let's Encrypt](https://letsencrypt.org) certificate for use with [GitLab Pages](https://pages.gitlab.io/).
+
+This fork adds lektor support to the tool.
+
+## Lektor support
+
+Create a new model *acme-challenge*:
+
+```
+[model]
+name = ACME-Challenge
+label = ACME-Challenge
+
+[fields.title]
+description = Dummy for the id.
+type = string
+width = 1/2
+
+[fields.challenge]
+description = The challenge goes here. The location goes in system field "URL slug".
+type = string
+width = 1/2
+```
+
+and a template *acme-challenge.html*:
+
+```
+{{ this.challenge }}
+```
+
+in your lektor project.
 
 ## Installation
 
@@ -78,3 +108,55 @@ However, GitLab does not provide a way to automatically renew certificates, so t
 ## Automation
 
 Since 10.2, GitLab provides an API to configure HTTPS certificates on a GitLab page, which means `gitlab-le` can be configured to obtain new certificates when your existing ones are about to expire.
+
+Note that the following text has been adapted from [this pullrequest](https://github.com/rolodato/gitlab-letsencrypt/pull/36).
+
+A [Docker image](https://hub.docker.com/r/niijv4/gitlab-letsencrypt/) from this forked repository is available.
+This means the Command-line tool can be used without installing all the dependencies required to run the application.
+
+Example:
+
+```text
+docker container run --rm -it niijv4/gitlab-letsencrypt \
+  --domain example.com \
+  --email me@example.com \
+  --repository https://gitlab.com/my/repo \
+  --lektor \
+  --path /content/acme \
+  --token $GITLAB_TOKEN
+```
+
+## Automatic renewal of the certificate
+
+Let's Encrypt certificates have a comparatively short life-span.
+They need to be renewed regularly.
+
+Use the [GitLab Pipeline Schedule](https://docs.gitlab.com/ce/user/project/pipelines/schedules.html) feature to automate the renewal process.
+
+```yaml
+ssl:renew certificate:
+  image:
+    name: niijv4/gitlab-letsencrypt
+    entrypoint: ["/bin/sh", "-c"]
+  variables:
+    GIT_STRATEGY: none
+  before_script: []
+  script: |-
+    gitlab-le \
+      --domain example.com \
+      --email $LETS_ENCRYPT_EMAIL \
+      --lektor \
+      --path /content/acme \
+      --production \
+      --repository $CI_PROJECT_URL \
+      --token $GITLAB_TOKEN
+  only:
+    - schedules
+```
+
+Add the following variables to your GitLab project: `LETS_ENCRYPT_EMAIL` and your secret `GITLAB_TOKEN`.
+
+Consider to add `except: [schedules]` to all other jobs in your `.gitlab-ci.yml` file, as they will be anyway triggered when gitlab-le adds and removes the ACME challenge.
+
+Schedule then a new pipeline to run for example every month.
+See <https://docs.gitlab.com/ce/user/project/pipelines/schedules.html> for details.
