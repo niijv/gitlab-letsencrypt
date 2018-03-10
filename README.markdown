@@ -141,7 +141,7 @@ ssl:renew certificate:
       --domain example.com \
       --email $LETS_ENCRYPT_EMAIL \
       --lektor \
-      --path /content/acme \
+      --path content \
       --production \
       --repository $CI_PROJECT_URL \
       --token $GITLAB_TOKEN
