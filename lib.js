@@ -57,7 +57,7 @@ module.exports = (options) => {
         // Need to bluebird-ify to use .asCallback()
         let filePath = encodeURIComponent(path.posix.resolve('/', options.path, key));
         if (options.lektor) {
-            filePath = encodeURIComponent(path.posix.resolve('/', filePath, 'contents.lr'));
+            filePath = encodeURIComponent(path.posix.join(filePath, 'contents.lr'));
         }
         return Promise.resolve(gitlabRequest.post({
             url: `/projects/${repo.id}/repository/files/${filePath}`,
