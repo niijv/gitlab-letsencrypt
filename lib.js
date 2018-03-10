@@ -55,7 +55,10 @@ module.exports = (options) => {
             challengeContent = `_model: acme-challenge\n---\ntitle: acme\n---\n_slug: .well-known/acme-challenge/${key}\n---\n challenge: ${value}\n`;
         }
         // Need to bluebird-ify to use .asCallback()
-        const filePath = encodeURIComponent(path.posix.resolve('/', options.path, key));
+        let filePath = encodeURIComponent(path.posix.resolve('/', options.path, key));
+        if (options.lektor) {
+            filePath = encodeURIComponent(path.posix.resolve('/', options.path, 'contents.lr'));
+        }
         return Promise.resolve(gitlabRequest.post({
             url: `/projects/${repo.id}/repository/files/${filePath}`,
             body: {
