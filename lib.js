@@ -52,12 +52,12 @@ module.exports = (options) => {
         if (options.jekyll) {
             challengeContent = `---\nlayout: null\npermalink: /.well-known/acme-challenge/${key}\n---\n${value}`;
         } else if (options.lektor) {
-            challengeContent = `_model: acme-challenge\n---\nchallenge: ${value}\n---\n_slug: .well-known/acme-challenge/${key}\n`;
+            challengeContent = `${value}`;
         }
         // Need to bluebird-ify to use .asCallback()
         let filePath = path.posix.resolve('/', options.path, key);
         if (options.lektor) {
-            filePath = path.posix.join(filePath, 'contents.lr');
+            filePath = path.posix.resolve('/', options.path, '.well-known/acme-challenge', key);
         }
         filePath = encodeURIComponent(filePath);
         return Promise.resolve(gitlabRequest.post({
