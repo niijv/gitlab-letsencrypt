@@ -6,26 +6,17 @@ This fork adds lektor support to the tool.
 
 ## Lektor support
 
-Create a new model `acme-challenge`:
+Extend the `included_assets` of your .lektorproject file with the path `.well-known` like below:
 
 ```
-[model]
-name = ACME-Challenge
-label = ACME-Challenge
-
-[fields.challenge]
-description = The challenge goes here. The location goes in system field "URL slug".
-type = string
-width = 1/2
+[project]
+name = MyProject
+locale = en
+url = https://example.com
+url_style = relative
+included_assets = .well-known
 ```
-   
-and a template `acme-challenge.html`:
-
-```
-{{ this.challenge }}
-```
-   
-in your lektor project.
+Otherwise the challenge file will be excluded from your lektor builds!
 
 ## Installation
 
