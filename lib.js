@@ -74,7 +74,7 @@ module.exports = (options) => {
     const deleteChallenges = (key, repo) => {
         let filePath = path.posix.resolve('/', options.path, key);
         if (options.lektor) {
-            filePath = path.posix.join(filePath, 'contents.lr');
+            filePath = path.posix.resolve('/', options.path, '.well-known/acme-challenge', key);
         }
         filePath = encodeURIComponent(filePath);
         return Promise.resolve(gitlabRequest.delete({
